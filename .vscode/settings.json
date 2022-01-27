@@ -1,8 +1,0 @@
-{
-    "python.analysis.extraPaths": [
-        "./lib",
-        "./plugins/houdini/scripts/python",
-        "C:/Program Files/Side Effects Software/Houdini 19.0.498/houdini/python3.7libs",
-        "C:/Program Files/Side Effects Software/Houdini 19.0.498/python37/lib"
-    ]
-}

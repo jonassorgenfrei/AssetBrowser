@@ -1,0 +1,17 @@
+{
+	"env": [
+		{
+			"jsAssetBrowser": "D:/Dokumente/Development/AssetBrowser"
+		},
+		{
+			"PYTHONPATH" : {
+				"value": "$jsAssetBrowser/lib",
+				"method": "append"
+			}
+		}
+	],
+	"path": [
+		"$jsAssetBrowser/plugins/houdini"
+	],
+	"version": "0.5"
+}

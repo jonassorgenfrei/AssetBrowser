@@ -1,12 +1,23 @@
 import hou
-import requests
 
-from PySide2 import QtWidgets, QtUiTools, QtGui
 
-from jsAssetBrowser.api import assetBrowser
+from PySide2 import QtWidgets, QtGui
 
+try:
+    from jsAssetBrowser.api import assetBrowser
+    from jsAssetBrowser.api.online_requests import request
+except ModuleNotFoundError:
+    # Note:
+    # houdini 19.0.455 has a problem that PYTHONPATH append in the package json dosnt work
+    # this is a work around by manually adding this to the python path
+    import sys
+    sys.path.append("{}/src".format(hou.getenv("jsAssetBrowser")))
+    from jsAssetBrowser.api import assetBrowser
+    from jsAssetBrowser.api.online_requests import request
+    
 # DEBUG
 from importlib import reload
+
 reload(assetBrowser)
 # DEBUG
 
@@ -29,7 +40,7 @@ class HouAssetBrowser(assetBrowser.AssetBrowser):
         mainLayout.addWidget(QtWidgets.QPushButton("Button"))
         
         img = QtGui.QImage()
-        img.loadFromData(requests.get("https://cdn.polyhaven.com/asset_img/thumbs/oberer_kuhberg.png?height=200").content)
+        img.loadFromData(request("https://cdn.polyhaven.com/asset_img/thumbs/oberer_kuhberg.png?height=200"))
         img_lbl = QtWidgets.QLabel("img")
         img_lbl.setPixmap(QtGui.QPixmap(img))
         mainLayout.addWidget(img_lbl)

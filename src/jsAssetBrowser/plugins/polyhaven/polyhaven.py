@@ -1,5 +1,5 @@
 import json
-import requests
+from jsAssetBrowser.api.online_requests import request
 from jsAssetBrowser.api.plugin import PluginInterface
 
 # poly haven HDRI api
@@ -14,8 +14,7 @@ class Plugin(PluginInterface):
     def run(self):
         """
         """
-        r = requests.get(url)
-        data = json.loads(r.content)
+        data = json.loads(request(url))
         print(data)
 
     def help(self):

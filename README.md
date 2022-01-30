@@ -4,7 +4,7 @@ A qt asset browser for applications like houdini/nuke/maya/blender
 Currently in development
 
 Note: 
-Only houdini plugin available during development
+Only houdini + nuke plugin available during development
 
 ## Install
 To install this tool set clone this repo into a local folder. (e.g. D:/Documents/).
@@ -14,6 +14,30 @@ Modify the *jsAssetBrowser.json* file that the jsAssetBrowser variable points to
 Copy the *jsAssetBrowser.json* file to the $HFS/packages folder. (e.g. D:/Documents/houdini18.0/packages)
 
 The Asset Browser can be added as a Panel using the Python Panel Edit Tab Menu option (cogwheel top left of panel). And add the "Project Viewer (projectViewer)"-Interface to te Pane Tab Menu Entries.
+
+### Nuke
+
+#### Nuke Plugin Manager
+It's recomended to us the Nuke Plugin Manager. 
+See the following link for a more indepth description:<br>
+https://github.com/jonassorgenfrei/NukePluginManager
+<br>You can find the necessary jsAssetBrwoser.json file in the plugins/nuke folder.
+
+#### Manual
+
+To append the plugin to nuke, you have to add the required paths to the nuke init file.
+E.g. add the following to your ```<user home directory>/.nuke/init.py``` file
+```
+import nuke
+import sys
+
+jsAssetBrowserPath = "<PATH_TO_THE_JS_ASSET_BROWSER_ROOT_DIR"
+
+sys.path.append("{}/src".format(jsAssetBrowserPath))
+nuke.pluginAddPath("{}/plugins/nuke/scripts".format(jsAssetBrowserPath))
+```
+
+Note: the AssetBrowser does only work with Nuke 12 and later due to the dependency of PySide2.
 
 ## Plugins
 This Module allows to add plugins for custom websites or specific file data structures/bases.

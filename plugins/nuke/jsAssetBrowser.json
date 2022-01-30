@@ -1,0 +1,11 @@
+{
+	"env": [
+		{
+			"jsAssetBrowser": "D:/Documents/Development/AssetBrowser"
+		},
+		{
+			"PYTHONPATH" : "$jsAssetBrowser/src"
+		}
+	],
+	"plugin_path": "$jsAssetBrowser/plugins/nuke/scripts"
+}

@@ -6,6 +6,8 @@ Currently in development
 Note: 
 Only houdini + nuke plugin available during development
 
+The tools is written in Python 3 !
+
 ## Install
 To install this tool set clone this repo into a local folder. (e.g. D:/Documents/).
 
@@ -38,6 +40,12 @@ nuke.pluginAddPath("{}/plugins/nuke/scripts".format(jsAssetBrowserPath))
 ```
 
 Note: the AssetBrowser does only work with Nuke 12 and later due to the dependency of PySide2.
+
+### Maya
+Not supported yet.
+
+### Blender
+Not supported yet.
 
 ## Plugins
 This Module allows to add plugins for custom websites or specific file data structures/bases.

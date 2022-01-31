@@ -61,6 +61,7 @@ class AssetBrowser(QtWidgets.QWidget):
         
         filters = {"type": "hdris",
                    "categorie": "skies"}
+        filters = {}
         
         self.download_queue = QtNetwork.QNetworkAccessManager()
         

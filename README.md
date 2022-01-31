@@ -1,6 +1,8 @@
 # AssetBrowser
 A qt asset browser for applications like houdini/nuke/maya/blender
 
+![js Asset Browser Houdini](help/images/houdiniPrev.jpg)
+
 Currently in development
 
 Note: 

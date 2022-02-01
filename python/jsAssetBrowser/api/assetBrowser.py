@@ -2,13 +2,16 @@
 QT Implementation of the Asset Browser
 """
 import os
+import requests
 import json
+import time
 
 from PySide2 import QtWidgets, QtGui, QtNetwork, QtCore, QtUiTools
 from PySide2.QtCore import Qt
 from jsAssetBrowser.api import modules
 from jsAssetBrowser.api import online_requests
 from jsAssetBrowser.api import qtUtils
+from jsAssetBrowser.api.qtUtils import Worker
 
 from jsAssetBrowser.ui.flowLayout import FlowLayout
 # qt load resources file
@@ -19,6 +22,7 @@ from importlib import reload
 reload(modules)
 reload(qtUtils)
 # DEBUG
+from jsAssetBrowser.api.qtUtils import Worker
 
 dirname = os.path.dirname(__file__)
 uiFile = "jsAssetBrowser.ui"
@@ -108,4 +112,56 @@ class AssetBrowser(QtWidgets.QWidget):
         """Interface for the button clicked
         """
         caller = self.sender().objectName()
-        print(caller)
+        caller = caller.replace("polyheaven.", "")
+        
+        resolution = "8k"
+        ext = "hdr"
+        
+        hdr_json = json.loads(online_requests.request("https://api.polyhaven.com/files/{}".format(caller)))
+        
+        workpath = "D:/Documents/Development/AssetBrowser" # os.path.join(dirname, "..")
+        
+        
+        self.url = hdr_json["hdri"][resolution][ext]["url"]
+        self.file_size = hdr_json["hdri"][resolution][ext]["size"]
+        local_file_name = workpath + "/downloads/" + os.path.basename(self.url)
+        
+        self.local_file = open(local_file_name, 'wb')
+        
+        # worker that downloads image
+        worker = Worker(self.download_img)
+        worker.signals.result.connect(self.print_output)
+        worker.signals.finished.connect(self.thread_complete)
+        worker.signals.progress.connect(self.progress_fn)
+        
+        self.threadpool.start(worker)
+
+    def download_img(self, progress_callback):
+        # todo change requests to 
+        res = requests.get(self.url, stream=True)
+        offset = 0
+        buffer = 512
+        
+        for chunk in res.iter_content(chunk_size=buffer):
+            if not chunk:
+                break
+            
+            self.local_file.seek(offset)
+            self.local_file.write(chunk)
+            offset = offset + len(chunk)
+        
+            progress = offset/int(self.file_size) * 100
+            
+            progress_callback.emit(progress)
+        
+        self.local_file.close()
+        return "Done."
+    
+    def progress_fn(self, n):
+        self.ui.progressBar.setValue(n)
+        
+    def print_output(self, s):
+        print("Result:", s) 
+        
+    def thread_complete(self):
+        print("Thread Done!")

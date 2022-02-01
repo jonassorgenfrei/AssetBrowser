@@ -1,1 +1,1 @@
-assBrowserFolder = ""
+assetBrowserFolder = ""

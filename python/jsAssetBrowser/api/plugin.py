@@ -13,6 +13,7 @@ class Item():
         
     def getIconURL(self, size):
         return self.iconUrl.replace("{SIZE}", "{}".format(size))
+       
 
 class PluginInterface():
     def __init__(self):

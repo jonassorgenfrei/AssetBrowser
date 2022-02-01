@@ -27,5 +27,4 @@ class HouAssetBrowser(assetBrowser.AssetBrowser):
         super(HouAssetBrowser, self).__init__()
 
     def asset_clicked(self):
-        caller = self.sender().objectName()
-        print(caller)
+        super().asset_clicked()

@@ -32,16 +32,12 @@ class AssetBrowser(QtWidgets.QWidget):
         with open('{}/../plugins/plugins.json'.format(dirname), 'r') as f:
             pluginsNames = json.load(f)
 
-        plugins = modules.loadPlugins(pluginsNames["plugins"])
-
-        for plugin in plugins:
-            plugin.run()
+        self.plugins = modules.loadPlugins(pluginsNames["plugins"])
 
         # Finished Plugin Loading
         
         # Load UI File
         self.loader = QtUiTools.QUiLoader()
-        self.loader.setWorkingDirectory(QtCore.QDir("D:/Documents/Development/AssetBrowser/python/jsAssetBrowser/ui"))
         self.ui = self.loader.load(os.path.join(dirname, "..", "ui", uiFile))
         
         mainLayout = QtWidgets.QVBoxLayout()
@@ -52,19 +48,45 @@ class AssetBrowser(QtWidgets.QWidget):
         self.flowWidget = QtWidgets.QWidget()
         self.ui.contentArea.setWidget(self.flowWidget)
         
-        assets_view = FlowLayout(self.flowWidget)
+        self.ui.modelBtn.clicked.connect(self.changeTypeModel)
+        self.ui.hdriBtn.clicked.connect(self.changeTypeHdri)
+        self.ui.textureBtn.clicked.connect(self.changeTypeTexture)
+        
+        self.assets_view = FlowLayout(self.flowWidget)
+        
+        self.type = "hdris"
         
         '''
         print(plugins[0].getFilters())
         '''
+     
+        self.fillItemArea()
+
+        self.setLayout(mainLayout)
+
+    def changeTypeModel(self):
+        self.type = "models"
+        self.fillItemArea()
+       
+    def changeTypeHdri(self):
+        self.type = "hdris"
+        self.fillItemArea()
         
-        filters = {"type": "hdris",
-                   "categorie": "skies"}
+    def changeTypeTexture(self):
+        self.type = "textures"
+        self.fillItemArea()
+    
+    def fillItemArea(self):
+        # clear asset view
+        for i in reversed(range(self.assets_view.count())): 
+            self.assets_view.itemAt(i).widget().setParent(None)
+        
+        filters = {"type": self.type }#"categorie": "skies"
         
         self.download_queue = QtNetwork.QNetworkAccessManager()
         self.threadpool = QtCore.QThreadPool()
-         
-        for item in plugins[0].getItems(filters):
+        
+        for item in self.plugins[0].getItems(filters):
             btn = QtWidgets.QToolButton()
             btn.setFixedSize(QtCore.QSize(thumbsize, thumbsize))
             btn.setIconSize(QtCore.QSize(thumbsize, thumbsize))
@@ -78,11 +100,9 @@ class AssetBrowser(QtWidgets.QWidget):
                 down.start_fetch(self.download_queue)
             except Exception as e:
                 print(e)
-            assets_view.addWidget(btn)
+            self.assets_view.addWidget(btn)
             
             btn.clicked.connect(self.asset_clicked)
-
-        self.setLayout(mainLayout)
 
     def asset_clicked(self):
         """Interface for the button clicked

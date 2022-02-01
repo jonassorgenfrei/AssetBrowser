@@ -56,3 +56,19 @@ To create a plugin create a new folder for the plugin in lib/jsAssetBrowser/plug
 Note the main module file must have the same name as the folder e.g. myPlugin/myPlugin.py and needs to implement a Plugin-Class which implements the abstract PluginInterface class. (see: polyheaven as example)
 
 In futur versions the json file will be created on runtime to manage plugins given the ability to enable or disable plugins.
+
+### Developer
+
+## Qt
+When changing the resource file in jsAssetBrowser/ui/*.qrc the file needs to be compiled.
+
+```
+pyside2-rcc <ressourceFile>.qrc -o <ressourceFile>_rc.py
+```
+
+It then can be imported using
+```
+from jsAssetBrowser.ui import <ressourceFile>_rc
+```
+
+Where <ressourceFile> is the file name for the resources with the ending .qrc

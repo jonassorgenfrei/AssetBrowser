@@ -5,7 +5,7 @@
 		},
 		{
 			"PYTHONPATH" : {
-				"value": "$jsAssetBrowser/src",
+				"value": "$jsAssetBrowser/python",
 				"method": "append"
 			}
 		}

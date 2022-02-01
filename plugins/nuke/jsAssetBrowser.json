@@ -4,7 +4,7 @@
 			"jsAssetBrowser": "D:/Documents/Development/AssetBrowser"
 		},
 		{
-			"PYTHONPATH" : "$jsAssetBrowser/src"
+			"PYTHONPATH" : "$jsAssetBrowser/python"
 		}
 	],
 	"plugin_path": "$jsAssetBrowser/plugins/nuke/scripts"

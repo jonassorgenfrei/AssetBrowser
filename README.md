@@ -60,7 +60,7 @@ polyhaven - https://polyhaven.com/
 
 ## Developer
 
-## Qt
+### Qt
 When changing the resource file in jsAssetBrowser/ui/*.qrc the file needs to be compiled.
 
 ```

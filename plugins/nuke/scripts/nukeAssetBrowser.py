@@ -12,10 +12,8 @@ class NukeAssetBrowser(assetBrowser.AssetBrowser):
         caller = self.sender().objectName()
         caller = caller.replace("polyheaven.", "")
         
-        try:
-            file = super().requestFile(caller)
-        except NameError:
-            nuke.message("Currently Download is not supported in Nuke due to missing python request library.")
+        file = super().requestFile(caller)
+
         filePath = file.as_posix()
         self.assign_hdr(filePath)
         

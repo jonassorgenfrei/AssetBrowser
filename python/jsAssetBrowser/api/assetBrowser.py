@@ -6,11 +6,6 @@ import json
 import pathlib
 import time
 
-# todo remove requests since nuke doest have this lib
-try:
-    import requests
-except Exception:
-    pass
 
 from PySide2 import QtWidgets, QtGui, QtNetwork, QtCore, QtUiTools
 from PySide2.QtCore import Qt
@@ -22,7 +17,7 @@ from jsAssetBrowser.api.qtUtils import Worker
 from jsAssetBrowser.ui.flowLayout import FlowLayout
 # qt load resources file
 from jsAssetBrowser.ui import fontAwesome_icons_rc
-
+from urllib.request import Request, urlopen
 # DEBUG
 from importlib import reload
 reload(modules)
@@ -102,7 +97,7 @@ class AssetBrowser(QtWidgets.QWidget):
         for i in reversed(range(self.assets_view.count())): 
             self.assets_view.itemAt(i).widget().setParent(None)
         
-        filters = {"type": self.type }#"categorie": "skies"
+        filters = {"type": self.type } #"categorie": "skies"
         
         self.download_queue = QtNetwork.QNetworkAccessManager()
         self.threadpool = QtCore.QThreadPool()
@@ -134,13 +129,12 @@ class AssetBrowser(QtWidgets.QWidget):
         
     def requestFile(self, caller):
         
-        resolution = "1k"
+        resolution = "8k"
         ext = "hdr"
         
         hdr_json = json.loads(online_requests.request("https://api.polyhaven.com/files/{}".format(caller)))
         
-        workpath = "D:/Documents/Development/AssetBrowser" # os.path.join(dirname, "..")
-        
+        workpath = os.path.dirname(os.path.dirname(os.path.dirname(dirname)))
         
         self.url = hdr_json["hdri"][resolution][ext]["url"]
         self.file_size = hdr_json["hdri"][resolution][ext]["size"]
@@ -159,18 +153,20 @@ class AssetBrowser(QtWidgets.QWidget):
             self.threadpool.start(worker)
             
         return local_file_name
-    
+
     def download_img(self, progress_callback):
         # todo change requests to 
-        res = requests.get(self.url, stream=True)
+        req = Request(self.url, headers={'User-Agent': 'Mozilla/5.0'})
+
+        res = urlopen(req)
         offset = 0
         buffer = 512
-        
-        for chunk in res.iter_content(chunk_size=buffer):
+
+        while True:
+            chunk = res.read(buffer)
             if not chunk:
                 break
-            
-            self.local_file.seek(offset)
+
             self.local_file.write(chunk)
             offset = offset + len(chunk)
         
@@ -180,7 +176,7 @@ class AssetBrowser(QtWidgets.QWidget):
         
         self.local_file.close()
         return "Done."
-    
+
     def progress_fn(self, n):
         self.ui.progressBar.setValue(n)
         

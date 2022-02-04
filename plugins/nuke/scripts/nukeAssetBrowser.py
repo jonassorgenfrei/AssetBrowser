@@ -1,3 +1,4 @@
+import os
 import nuke
 from nukescripts import panels
 
@@ -8,4 +9,23 @@ class NukeAssetBrowser(assetBrowser.AssetBrowser):
         super(NukeAssetBrowser, self).__init__()
     
     def asset_clicked(self):
-        print("DATA - Nuke!")
+        caller = self.sender().objectName()
+        caller = caller.replace("polyheaven.", "")
+        
+        try:
+            file = super().requestFile(caller)
+        except NameError:
+            nuke.message("Currently Download is not supported in Nuke due to missing python request library.")
+        filePath = file.as_posix()
+        self.assign_hdr(filePath)
+        
+    def assign_hdr(self, filePath):
+        selNodes = nuke.selectedNodes()
+        
+        if len(selNodes) > 0:
+            selNode = selNodes[0]
+            
+            nodeClass = selNode.Class()
+            
+            if nodeClass == "Read":
+                selNode.knob('file').setValue(filePath)

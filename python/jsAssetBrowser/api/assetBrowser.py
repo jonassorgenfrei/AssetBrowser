@@ -2,9 +2,15 @@
 QT Implementation of the Asset Browser
 """
 import os
-import requests
 import json
+import pathlib
 import time
+
+# todo remove requests since nuke doest have this lib
+try:
+    import requests
+except Exception:
+    pass
 
 from PySide2 import QtWidgets, QtGui, QtNetwork, QtCore, QtUiTools
 from PySide2.QtCore import Qt
@@ -52,6 +58,14 @@ class AssetBrowser(QtWidgets.QWidget):
         self.flowWidget = QtWidgets.QWidget()
         self.ui.contentArea.setWidget(self.flowWidget)
         
+        self.ui.contentSplitter.setStretchFactor(0, 0)
+        self.ui.contentSplitter.setStretchFactor(1, 1)
+        
+        self.ui.itemSplitter.setStretchFactor(0, 1)
+        self.ui.itemSplitter.setStretchFactor(1, 0)
+        
+        self.ui.contentLabel.setText("HDRIs")
+        
         self.ui.modelBtn.clicked.connect(self.changeTypeModel)
         self.ui.hdriBtn.clicked.connect(self.changeTypeHdri)
         self.ui.textureBtn.clicked.connect(self.changeTypeTexture)
@@ -70,14 +84,17 @@ class AssetBrowser(QtWidgets.QWidget):
 
     def changeTypeModel(self):
         self.type = "models"
+        self.ui.contentLabel.setText("Models")
         self.fillItemArea()
        
     def changeTypeHdri(self):
         self.type = "hdris"
+        self.ui.contentLabel.setText("HDRIs")
         self.fillItemArea()
         
     def changeTypeTexture(self):
         self.type = "textures"
+        self.ui.contentLabel.setText("Textures")
         self.fillItemArea()
     
     def fillItemArea(self):
@@ -113,8 +130,11 @@ class AssetBrowser(QtWidgets.QWidget):
         """
         caller = self.sender().objectName()
         caller = caller.replace("polyheaven.", "")
+        print(caller)
         
-        resolution = "8k"
+    def requestFile(self, caller):
+        
+        resolution = "1k"
         ext = "hdr"
         
         hdr_json = json.loads(online_requests.request("https://api.polyhaven.com/files/{}".format(caller)))
@@ -124,18 +144,22 @@ class AssetBrowser(QtWidgets.QWidget):
         
         self.url = hdr_json["hdri"][resolution][ext]["url"]
         self.file_size = hdr_json["hdri"][resolution][ext]["size"]
-        local_file_name = workpath + "/downloads/" + os.path.basename(self.url)
+        local_file_name = pathlib.Path(workpath + "/downloads/" + os.path.basename(self.url))
         
-        self.local_file = open(local_file_name, 'wb')
-        
-        # worker that downloads image
-        worker = Worker(self.download_img)
-        worker.signals.result.connect(self.print_output)
-        worker.signals.finished.connect(self.thread_complete)
-        worker.signals.progress.connect(self.progress_fn)
-        
-        self.threadpool.start(worker)
-
+        # check if file exists, it it does, skip download
+        if not local_file_name.is_file():
+            self.local_file = open(local_file_name, 'wb')
+            
+            # worker that downloads image
+            worker = Worker(self.download_img)
+            worker.signals.result.connect(self.print_output)
+            worker.signals.finished.connect(self.thread_complete)
+            worker.signals.progress.connect(self.progress_fn)
+            
+            self.threadpool.start(worker)
+            
+        return local_file_name
+    
     def download_img(self, progress_callback):
         # todo change requests to 
         res = requests.get(self.url, stream=True)

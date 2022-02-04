@@ -55,7 +55,7 @@ Note the main module file must have the same name as the folder e.g. myPlugin/my
 
 In futur versions the json file will be created on runtime to manage plugins given the ability to enable or disable plugins.
 
-The following plugins are currently implemented by default:\n
+The following plugins are currently implemented by default:<br>
 polyhaven - https://polyhaven.com/
 
 ## Developer

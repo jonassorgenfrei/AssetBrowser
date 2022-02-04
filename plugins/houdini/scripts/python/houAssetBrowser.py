@@ -45,6 +45,9 @@ class HouAssetBrowser(assetBrowser.AssetBrowser):
             if nodeType == "envlight":
                 # for environment light
                 selItem.parm("env_map").set(str(file))
+            elif nodeType == "domelight::2.0":
+                # for solaris environment light
+                selItem.parm("xn__inputstexturefile_r3ah").set(str(file))
             elif nodeType == "rslightdome::2.0":
                 # for redshift env light
                 selItem.parm("env_map").set(str(file))

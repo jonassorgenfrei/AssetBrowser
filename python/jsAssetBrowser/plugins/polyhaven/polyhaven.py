@@ -37,7 +37,6 @@ class Plugin(PluginInterface):
         return filters
         
     def getItems(self, filters={}, search=None):
-        # overwrite url for debugging
         urlAppend = ""
         
         if "type" in filters:
@@ -52,4 +51,11 @@ class Plugin(PluginInterface):
         
         return items
     
-    
+    def getCategories(self, filters={}):
+        if "type" in filters:
+            data = json.loads(request("{}/categories/{}".format(url, filters["type"])))      
+            items = data.keys()
+        else:
+            itmes = []
+
+        return items

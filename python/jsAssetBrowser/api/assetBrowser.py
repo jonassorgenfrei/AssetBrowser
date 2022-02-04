@@ -74,6 +74,7 @@ class AssetBrowser(QtWidgets.QWidget):
         '''
      
         self.fillItemArea()
+        self.fillCategoriesArea()
 
         self.setLayout(mainLayout)
 
@@ -81,16 +82,31 @@ class AssetBrowser(QtWidgets.QWidget):
         self.type = "models"
         self.ui.contentLabel.setText("Models")
         self.fillItemArea()
+        self.fillCategoriesArea()
        
     def changeTypeHdri(self):
         self.type = "hdris"
         self.ui.contentLabel.setText("HDRIs")
         self.fillItemArea()
-        
+        self.fillCategoriesArea()
+
     def changeTypeTexture(self):
         self.type = "textures"
         self.ui.contentLabel.setText("Textures")
         self.fillItemArea()
+        self.fillCategoriesArea()
+
+    def fillCategoriesArea(self):
+        filters = {"type": self.type } #"categorie": "skies"
+        categories = self.plugins[0].getCategories(filters)
+        
+        for i in reversed(range(self.ui.categories.count())): 
+            self.ui.categories.itemAt(i).widget().setParent(None)
+        
+
+        for category in categories:
+            btn = QtWidgets.QPushButton(category)
+            self.ui.categories.addWidget(btn)
     
     def fillItemArea(self):
         # clear asset view
@@ -174,6 +190,7 @@ class AssetBrowser(QtWidgets.QWidget):
             
             progress_callback.emit(progress)
         
+        progress_callback.emit(100)
         self.local_file.close()
         return "Done."
 

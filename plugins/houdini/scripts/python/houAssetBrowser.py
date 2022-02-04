@@ -42,18 +42,18 @@ class HouAssetBrowser(assetBrowser.AssetBrowser):
             
             nodeType = selItem.type().name()
 
-            if nodeType == "envlight":
+            if nodeType in["envlight", "rslightdome::2.0"]:
                 # for environment light
                 selItem.parm("env_map").set(str(file))
             elif nodeType == "domelight::2.0":
                 # for solaris environment light
                 selItem.parm("xn__inputstexturefile_r3ah").set(str(file))
-            elif nodeType == "rslightdome::2.0":
-                # for redshift env light
-                selItem.parm("env_map").set(str(file))
             elif nodeType == "arnold_light":
                 selItem.parm("ar_light_type").set(6)
                 selItem.parm("ar_light_color_type").set(6)
                 selItem.parm("ar_format").set(2)
                 selItem.parm("ar_light_color_texture").set(str(file))
-                
+    
+    def thread_complete(self):
+        super().thread_complete()
+        print("reload texture! in Houdini")

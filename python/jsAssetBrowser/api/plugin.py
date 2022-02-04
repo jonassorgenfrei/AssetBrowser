@@ -32,3 +32,8 @@ class PluginInterface():
         """Returns a list of items
         """
         pass
+
+    def getCategories(self, filters={}):
+        """Returns a list of categories
+        """
+        pass

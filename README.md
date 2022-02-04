@@ -4,9 +4,7 @@ A qt asset browser for applications like houdini/nuke/maya/blender
 ![js Asset Browser Houdini](help/images/houdiniPrev.jpg)
 
 Currently in development
-
-Note: 
-Only houdini + nuke plugin available during development
+only hdri assignment to selected environment light nodes (houdini)/read nodes (nuke) works.
 
 The tools is written in Python 3 !
 
@@ -57,7 +55,10 @@ Note the main module file must have the same name as the folder e.g. myPlugin/my
 
 In futur versions the json file will be created on runtime to manage plugins given the ability to enable or disable plugins.
 
-### Developer
+The current plugins are currently implemented by default:
+polyhaven - https://polyhaven.com/
+
+## Developer
 
 ## Qt
 When changing the resource file in jsAssetBrowser/ui/*.qrc the file needs to be compiled.
@@ -72,3 +73,7 @@ from jsAssetBrowser.ui import <ressourceFile>_rc
 ```
 
 Where <ressourceFile> is the file name for the resources with the ending .qrc
+
+## References
+Kudos to Mix Training on youtube for giving the idea and some base structure in the awesome tutorial series
+https://www.youtube.com/watch?v=FoEykOrdgt4&list=PLAnSvhIvNZCtUz7-yOrBugM59Y_jixwWR

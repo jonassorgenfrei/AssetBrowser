@@ -14,7 +14,10 @@ reload(houAssetBrowser)
 # DEBUG
 
 def createInterface():
-    return houAssetBrowser.HouAssetBrowser()]]></script>
+    try:
+        return houAssetBrowser.HouAssetBrowser()
+    except Exception as e:
+        raise e]]></script>
     <includeInToolbarMenu menu_position="107" create_separator="false"/>
     <help><![CDATA[An Asset Browser for Assets like models, textures, HDRIs ...]]></help>
   </interface>

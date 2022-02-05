@@ -12,17 +12,20 @@ from PySide2.QtCore import Qt
 from jsAssetBrowser.api import modules
 from jsAssetBrowser.api import online_requests
 from jsAssetBrowser.api import qtUtils
-from jsAssetBrowser.api.qtUtils import Worker
 
 from jsAssetBrowser.ui.flowLayout import FlowLayout
 # qt load resources file
 from jsAssetBrowser.ui import fontAwesome_icons_rc
+from jsAssetBrowser.ui import assetItemWidget
 from urllib.request import Request, urlopen
+
 # DEBUG
 from importlib import reload
 reload(modules)
 reload(qtUtils)
+reload(assetItemWidget)
 # DEBUG
+
 from jsAssetBrowser.api.qtUtils import Worker
 
 dirname = os.path.dirname(__file__)
@@ -64,6 +67,9 @@ class AssetBrowser(QtWidgets.QWidget):
         self.ui.modelBtn.clicked.connect(self.changeTypeModel)
         self.ui.hdriBtn.clicked.connect(self.changeTypeHdri)
         self.ui.textureBtn.clicked.connect(self.changeTypeTexture)
+        
+        
+        self.thumbnailSize = QtCore.QSize(260, 200)
         
         self.assets_view = FlowLayout(self.flowWidget)
         
@@ -119,27 +125,23 @@ class AssetBrowser(QtWidgets.QWidget):
         self.threadpool = QtCore.QThreadPool()
         
         for item in self.plugins[0].getItems(filters):
-            btn = QtWidgets.QToolButton()
-            btn.setFixedSize(QtCore.QSize(thumbsize, thumbsize))
-            btn.setIconSize(QtCore.QSize(thumbsize, thumbsize))
-            btn.setToolButtonStyle(Qt.ToolButtonTextUnderIcon)
-            btn.setText(item.name)
-            btn.setObjectName("{}.{}".format(item.sourceKey, item.key))
+            asset = assetItemWidget.AssetItemWidget(self.thumbnailSize, item.name)
+            asset.setObjectName("{}.{}".format(item.sourceKey, item.key))
  
             try:
-                req = QtNetwork.QNetworkRequest(QtCore.QUrl(item.getIconURL(thumbsize)))
-                down = qtUtils.ImgDownloader(btn, req)
+                req = QtNetwork.QNetworkRequest(QtCore.QUrl(item.getIconURL(self.thumbnailSize.height())))
+                down = qtUtils.ImgDownloader(asset, req)
                 down.start_fetch(self.download_queue)
             except Exception as e:
                 print(e)
-            self.assets_view.addWidget(btn)
+            self.assets_view.addWidget(asset)
             
-            btn.clicked.connect(self.asset_clicked)
+            asset.btn.clicked.connect(self.asset_clicked)
 
     def asset_clicked(self):
         """Interface for the button clicked
         """
-        caller = self.sender().objectName()
+        caller = self.sender().parent().objectName()
         caller = caller.replace("polyheaven.", "")
         print(caller)
         

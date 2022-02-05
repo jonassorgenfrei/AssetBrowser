@@ -27,7 +27,7 @@ class HouAssetBrowser(assetBrowser.AssetBrowser):
         super(HouAssetBrowser, self).__init__()
 
     def asset_clicked(self):
-        caller = self.sender().objectName()
+        caller = self.sender().parent().objectName()
         caller = caller.replace("polyheaven.", "") 
         
         file = super().requestFile(caller)

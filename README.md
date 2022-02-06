@@ -1,8 +1,6 @@
 # AssetBrowser
 A qt asset browser for applications like houdini/nuke/maya/blender
 
-![js Asset Browser Houdini](help/images/houdiniPrev.jpg)
-
 Currently in development
 only hdri assignment to selected environment light nodes (houdini)/read nodes (nuke) works.
 
@@ -12,12 +10,15 @@ The tools is written in Python 3 !
 To install this tool set clone this repo into a local folder. (e.g. D:/Documents/).
 
 ### Houdini
+![js Asset Browser Houdini](help/images/houdiniPrev.jpg)
+
 Modify the *jsAssetBrowser.json* file that the jsAssetBrowser variable points to the plugins/houdini folder in the local clone of the repository (absolut path).
 Copy the *jsAssetBrowser.json* file to the $HFS/packages folder. (e.g. D:/Documents/houdini18.0/packages)
 
 The Asset Browser can be added as a Panel using the Python Panel Edit Tab Menu option (cogwheel top left of panel). And add the "Project Viewer (projectViewer)"-Interface to te Pane Tab Menu Entries.
 
 ### Nuke
+![js Asset Browser Nuke](help/images/nukePrev.jpg)
 
 #### Nuke Plugin Manager
 It's recomended to us the Nuke Plugin Manager. 
@@ -42,7 +43,10 @@ nuke.pluginAddPath("{}/plugins/nuke/scripts".format(jsAssetBrowserPath))
 Note: the AssetBrowser does only work with Nuke 12 and later due to the dependency of PySide2.
 
 ### Maya
-Not supported yet.
+![js Asset Browser Maya](help/images/mayaPrev.jpg)
+
+Until finding a better way it's possible to run the Asset Browser in maya (without functionality). 
+Runnig the startUp.py in maya after adding the maya folder to the python path.
 
 ### Blender
 Not supported yet.

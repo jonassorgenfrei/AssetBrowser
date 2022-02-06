@@ -15,6 +15,9 @@ def main():
 
 
 def js_openAssetBrowser():
+    if pm.window("jsAssetBrowserWorkspaceControl", exists = True):
+        pm.deleteUI("jsAssetBrowserWorkspaceControl")
+                
     myWindow = mayaAssetBrowser.MayaDockableAssetBrowser()
     myWindow.show(dockable=True)
     

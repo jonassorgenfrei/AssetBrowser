@@ -10,7 +10,7 @@ except ModuleNotFoundError:
     sys.path.append("{}/python".format(os.path.dirname(os.path.dirname(os.path.dirname(__file__)))))
     from jsAssetBrowser.api import assetBrowser
     
-    
+import maya.cmds as cmds
 from jsAssetBrowser.api import assetBrowser
 
 from PySide2 import QtWidgets, QtCore, QtGui
@@ -72,6 +72,16 @@ class MayaDockableAssetBrowser(MayaQWidgetDockableMixin, QtWidgets.QWidget):
         
         self.setLayout(mainLayout)
         
+    def __del__(self):
+        workspaceName = self.__class__.__name__
+        print(workspaceName)
+        if cmds.workspaceControlState(workspaceName, q=True, exists=True):
+            try:
+                cmds.workspaceControl(workspaceName, e=True, close=True)
+                cmds.deleteUI(workspaceName)
+            except RuntimeError:
+                cmds.workspaceControlState(workspaceName, remove=True)
+
         
 '''
 For adding it as a plugin!

@@ -9,14 +9,11 @@ import time
 
 from PySide2 import QtWidgets, QtGui, QtNetwork, QtCore, QtUiTools
 from PySide2.QtCore import Qt
-from jsAssetBrowser.api import modules
-from jsAssetBrowser.api import online_requests
-from jsAssetBrowser.api import qtUtils
+from jsAssetBrowser.api import config, modules, online_requests, qtUtils
 
 from jsAssetBrowser.ui.flowLayout import FlowLayout
 # qt load resources file
-from jsAssetBrowser.ui import fontAwesome_icons_rc
-from jsAssetBrowser.ui import assetItemWidget
+from jsAssetBrowser.ui import assetItemInfoWidget, assetItemWidget, fontAwesome_icons_rc
 from urllib.request import Request, urlopen
 
 # DEBUG
@@ -24,13 +21,15 @@ from importlib import reload
 reload(modules)
 reload(qtUtils)
 reload(assetItemWidget)
+reload(assetItemInfoWidget)
+reload(config)
 # DEBUG
 
 from jsAssetBrowser.api.qtUtils import Worker
 
 dirname = os.path.dirname(__file__)
 uiFile = "jsAssetBrowser.ui"
-thumbsize = 200
+
 
 class AssetBrowser(QtWidgets.QWidget):
     def __init__(self):
@@ -56,11 +55,11 @@ class AssetBrowser(QtWidgets.QWidget):
         self.flowWidget = QtWidgets.QWidget()
         self.ui.contentArea.setWidget(self.flowWidget)
         
-        self.ui.contentSplitter.setStretchFactor(0, 0)
-        self.ui.contentSplitter.setStretchFactor(1, 1)
+        self.ui.contentSplitter.setStretchFactor(0, 1)
+        self.ui.contentSplitter.setStretchFactor(1, 6)
         
-        self.ui.itemSplitter.setStretchFactor(0, 1)
-        self.ui.itemSplitter.setStretchFactor(1, 0)
+        self.ui.itemSplitter.setStretchFactor(0, 4)
+        self.ui.itemSplitter.setStretchFactor(1, 1)
         
         self.ui.contentLabel.setText("HDRIs")
         
@@ -68,13 +67,22 @@ class AssetBrowser(QtWidgets.QWidget):
         self.ui.hdriBtn.clicked.connect(self.changeTypeHdri)
         self.ui.textureBtn.clicked.connect(self.changeTypeTexture)
         
+        self.config = config.Config()
         
-        self.thumbnailSize = QtCore.QSize(260, 200)
+        thumb_height = 256
+        thumb_width = int(thumb_height + thumb_height * 0.33333)-6
+        
+        self.thumbnailSize = QtCore.QSize(thumb_width, thumb_height)
         
         self.assets_view = FlowLayout(self.flowWidget)
+        self.assets_view.setSpacing(0) 
         
+        self.infoWidget = assetItemInfoWidget.AssetItemInfoWidget()
+        self.ui.infoArea.setWidget(self.infoWidget )
+        
+        # init
         self.type = "hdris"
-        
+        self.category = None
         '''
         print(plugins[0].getFilters())
         '''
@@ -101,25 +109,35 @@ class AssetBrowser(QtWidgets.QWidget):
         self.ui.contentLabel.setText("Textures")
         self.fillItemArea()
         self.fillCategoriesArea()
-
+        
+    def changeCategory(self):
+        caller = self.sender().objectName()
+        if self.category != caller:
+            self.category = caller
+            self.fillItemArea()
+    
     def fillCategoriesArea(self):
-        filters = {"type": self.type } #"categorie": "skies"
+        filters = {"type": self.type }
         categories = self.plugins[0].getCategories(filters)
         
-        for i in reversed(range(self.ui.categories.count())): 
-            self.ui.categories.itemAt(i).widget().setParent(None)
+        # clear
+        qtUtils.clear_layout(self.ui.categories)
         
-
         for category in categories:
             btn = QtWidgets.QPushButton(category)
             self.ui.categories.addWidget(btn)
+            btn.setObjectName(category)
+            btn.clicked.connect(self.changeCategory)
     
     def fillItemArea(self):
         # clear asset view
-        for i in reversed(range(self.assets_view.count())): 
-            self.assets_view.itemAt(i).widget().setParent(None)
+        qtUtils.clear_layout(self.assets_view)
         
         filters = {"type": self.type } #"categorie": "skies"
+        
+        if self.category != None:
+            filters = {"type": self.type,
+                       "category": self.category }
         
         self.download_queue = QtNetwork.QNetworkAccessManager()
         self.threadpool = QtCore.QThreadPool()
@@ -146,18 +164,16 @@ class AssetBrowser(QtWidgets.QWidget):
         print(caller)
         
     def requestFile(self, caller):
-        
-        resolution = "8k"
-        ext = "hdr"
-        
+        resolution = self.infoWidget.resolution
+        ext = self.infoWidget.extension
+
+
         hdr_json = json.loads(online_requests.request("https://api.polyhaven.com/files/{}".format(caller)))
-        
-        workpath = os.path.dirname(os.path.dirname(os.path.dirname(dirname)))
-        
+                
         self.url = hdr_json["hdri"][resolution][ext]["url"]
         self.file_size = hdr_json["hdri"][resolution][ext]["size"]
-        local_file_name = pathlib.Path(workpath + "/downloads/" + os.path.basename(self.url))
-        
+        local_file_name = pathlib.Path(os.path.join(self.config.downloadFolder, os.path.basename(self.url)))
+
         # check if file exists, it it does, skip download
         if not local_file_name.is_file():
             self.local_file = open(local_file_name, 'wb')

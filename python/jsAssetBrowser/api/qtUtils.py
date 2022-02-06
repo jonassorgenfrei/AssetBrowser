@@ -57,3 +57,13 @@ class Worker(QtCore.QRunnable):
             self.signals.result.emit(result)
         finally:
             self.signals.finished.emit()
+
+def clear_layout(layout):
+    while layout.count():
+        child = layout.takeAt(0)
+        if child.widget():
+            child.widget().deleteLater()
+            
+    # alternative
+    #for i in reversed(range(self.ui.categories.count())): 
+    #        self.ui.categories.itemAt(i).widget().setParent(None)

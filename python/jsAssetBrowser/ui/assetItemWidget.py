@@ -37,21 +37,21 @@ class AssetItemWidget(QtWidgets.QWidget):
                                "QToolButton::hover{background:#3d3d3d; border: 3px solid #ffffff;}")
         
         # corner button 
-        self.cornerBtn = QtWidgets.QPushButton("X", self)
+        self.cornerBtn = QtWidgets.QPushButton(self)
         self.cornerBtn.setIcon(QtGui.QIcon(":/font-awesome/external/fontAwesome/svgs/solid/check-circle.svg"))
         self.cornerBtn.setProperty('transparent', True)
         self.cornerBtn.setAttribute(Qt.WA_TransparentForMouseEvents)
         
-        
+        self.lbl_name_size = thumbsize.height()/16
         
         self.cornerBtn.resize(50,50)
-        self.cornerBtn.move(210,10)
+        self.cornerBtn.move(thumbsize.width()-60,10)
 
         self.name_lbl = QtWidgets.QLabel(label, self)
-        self.name_lbl.move(5, 95)
+        self.name_lbl.move(5, int(thumbsize.height()/1.5)-self.name_lbl.sizeHint().height())
         self.name_lbl.hide()
         self.name_lbl.setStyleSheet("QLabel{font-family: " + QtGui.QFontDatabase.applicationFontFamilies(_id)[0] + ";"\
-                                    "font-size: 14pt;"\
+                                    "font-size: " + str(self.lbl_name_size)+ ";"\
                                     "color:#ffffff;"\
                                     "background-color: #88000000;}")
         self.name_lbl.setAttribute(Qt.WA_TransparentForMouseEvents)

@@ -9,7 +9,8 @@ import time
 
 from PySide2 import QtWidgets, QtGui, QtNetwork, QtCore, QtUiTools
 from PySide2.QtCore import Qt
-from jsAssetBrowser.api import config, modules, online_requests, qtUtils
+
+from jsAssetBrowser.api import config, database, modules, online_requests, qtUtils
 
 from jsAssetBrowser.ui.flowLayout import FlowLayout
 # qt load resources file
@@ -30,10 +31,14 @@ from jsAssetBrowser.api.qtUtils import Worker
 dirname = os.path.dirname(__file__)
 uiFile = "jsAssetBrowser.ui"
 
+cached_asset = dict()
 
 class AssetBrowser(QtWidgets.QWidget):
     def __init__(self):
         super(AssetBrowser, self).__init__()
+        self.config = config.Config()
+
+        db = database.Database(self.config)
 
         # Loading Plugins
         with open('{}/../plugins/plugins.json'.format(dirname), 'r') as f:
@@ -67,7 +72,7 @@ class AssetBrowser(QtWidgets.QWidget):
         self.ui.hdriBtn.clicked.connect(self.changeTypeHdri)
         self.ui.textureBtn.clicked.connect(self.changeTypeTexture)
         
-        self.config = config.Config()
+        
         
         thumb_height = 256
         thumb_width = int(thumb_height + thumb_height * 0.33333)-6

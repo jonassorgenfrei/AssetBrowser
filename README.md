@@ -4,7 +4,7 @@ A qt asset browser for applications like houdini/nuke/maya/blender
 Currently in development
 only hdri assignment to selected environment light nodes (houdini)/read nodes (nuke) works.
 
-The tools is written in Python 3 !
+The assetbrowser is written in Python 3 and does work with Python2 anymore!
 
 ## Install
 To install this tool set clone this repo into a local folder. (e.g. D:/Documents/).

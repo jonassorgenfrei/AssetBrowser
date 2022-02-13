@@ -21,6 +21,7 @@ from urllib.request import Request, urlopen
 from importlib import reload
 reload(modules)
 reload(qtUtils)
+reload(database)
 reload(assetItemWidget)
 reload(assetItemInfoWidget)
 reload(config)

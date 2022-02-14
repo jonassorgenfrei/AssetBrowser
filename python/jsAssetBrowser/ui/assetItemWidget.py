@@ -24,9 +24,14 @@ class AssetItemWidget(QtWidgets.QWidget):
     def __init__(self, thumbsize, label):
         super(AssetItemWidget, self).__init__()
         
+        global cached_assets
+        # item data 
+        self.thumbsize = thumbsize
+        self.label = label
+        
         self.setMinimumSize(thumbsize)
         
-        self.setToolTip(label)
+        self.setToolTip(self.label)
         
         # main button image
         self.btn = AssetItemButton(self)
@@ -47,7 +52,7 @@ class AssetItemWidget(QtWidgets.QWidget):
         self.cornerBtn.resize(50,50)
         self.cornerBtn.move(thumbsize.width()-60,10)
 
-        self.name_lbl = QtWidgets.QLabel(label, self)
+        self.name_lbl = QtWidgets.QLabel(self.label, self)
         self.name_lbl.move(5, int(thumbsize.height()/1.5)-self.name_lbl.sizeHint().height())
         self.name_lbl.hide()
         self.name_lbl.setStyleSheet("QLabel{font-family: " + QtGui.QFontDatabase.applicationFontFamilies(_id)[0] + ";"\
@@ -60,3 +65,10 @@ class AssetItemWidget(QtWidgets.QWidget):
         
     def setIcon(self, image):
         self.btn.setIcon(image)
+        
+    def setIconFromData(self):
+        imgBlob = cached_assets[self.label]
+        qImg = QtGui.QImage.fromData(imgBlob)
+        pixmap = QtGui.QPixmap.fromImage(qImg)
+        self.set_image(QtGui.QIcon(pixmap))
+        

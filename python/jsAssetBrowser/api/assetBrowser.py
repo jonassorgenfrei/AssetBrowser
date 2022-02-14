@@ -39,7 +39,7 @@ class AssetBrowser(QtWidgets.QWidget):
         super(AssetBrowser, self).__init__()
         self.config = config.Config()
 
-        db = database.Database(self.config)
+        self.db = database.Database(self.config)
 
         # Loading Plugins
         with open('{}/../plugins/plugins.json'.format(dirname), 'r') as f:
@@ -71,14 +71,15 @@ class AssetBrowser(QtWidgets.QWidget):
         
         self.ui.modelBtn.clicked.connect(self.changeTypeModel)
         self.ui.hdriBtn.clicked.connect(self.changeTypeHdri)
-        self.ui.textureBtn.clicked.connect(self.changeTypeTexture)
-        
-        
+        self.ui.textureBtn.clicked.connect(self.changeTypeTexture)      
         
         thumb_height = 256
         thumb_width = int(thumb_height + thumb_height * 0.33333)-6
         
         self.thumbnailSize = QtCore.QSize(thumb_width, thumb_height)
+        
+        self.cached_assets = self.db.getCachedThumbnails(self.thumbnailSize)
+        self.img_cached_assets = dict()
         
         self.assets_view = FlowLayout(self.flowWidget)
         self.assets_view.setSpacing(0) 
@@ -151,13 +152,15 @@ class AssetBrowser(QtWidgets.QWidget):
         for item in self.plugins[0].getItems(filters):
             asset = assetItemWidget.AssetItemWidget(self.thumbnailSize, item.name)
             asset.setObjectName("{}.{}".format(item.sourceKey, item.key))
- 
-            try:
+            
+            if item.key in self.cached_assets:
+                print("icons from data")
+                asset.setIconFromData()
+            else:
                 req = QtNetwork.QNetworkRequest(QtCore.QUrl(item.getIconURL(self.thumbnailSize.height())))
                 down = qtUtils.ImgDownloader(asset, req)
                 down.start_fetch(self.download_queue)
-            except Exception as e:
-                print(e)
+            
             self.assets_view.addWidget(asset)
             
             asset.btn.clicked.connect(self.asset_clicked)
@@ -226,3 +229,4 @@ class AssetBrowser(QtWidgets.QWidget):
         
     def thread_complete(self):
         print("Thread Done!")
+        

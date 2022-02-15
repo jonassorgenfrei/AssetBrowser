@@ -37,13 +37,12 @@ class Database():
 
     def getAllImagesInDB(self, thumbsize):
         global conn
-        global cached_assets
         
         conn.row_factory = sqlite3.Row
         
         cached_imgs = conn.execute('''SELECT name, img FROM thumbnails WHERE size=?''',
                                   (thumbsize.height(), )).fetchall()
-        
+        cached_assets=dict()
         for row in cached_imgs:
             cached_assets[row['name']] = row['img']
         

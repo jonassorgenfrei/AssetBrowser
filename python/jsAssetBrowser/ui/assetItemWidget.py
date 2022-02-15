@@ -21,14 +21,15 @@ class AssetItemButton(QtWidgets.QToolButton):
         self.mouseHover.emit(False)
 
 class AssetItemWidget(QtWidgets.QWidget):
-    def __init__(self, thumbsize, label):
+    def __init__(self, thumbsize, label, key, cached_assets):
         super(AssetItemWidget, self).__init__()
         
-        global cached_assets
         # item data 
         self.thumbsize = thumbsize
         self.label = label
-        
+
+        self.cached_assets = cached_assets
+        self.key = key
         self.setMinimumSize(thumbsize)
         
         self.setToolTip(self.label)
@@ -67,8 +68,8 @@ class AssetItemWidget(QtWidgets.QWidget):
         self.btn.setIcon(image)
         
     def setIconFromData(self):
-        imgBlob = cached_assets[self.label]
+        imgBlob = self.cached_assets[self.key]
         qImg = QtGui.QImage.fromData(imgBlob)
         pixmap = QtGui.QPixmap.fromImage(qImg)
-        self.set_image(QtGui.QIcon(pixmap))
+        self.setIcon(QtGui.QIcon(pixmap))
         

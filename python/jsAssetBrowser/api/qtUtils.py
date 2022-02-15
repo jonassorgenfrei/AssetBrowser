@@ -26,7 +26,7 @@ class ImgDownloader(QtCore.QObject):
         self.parent().setIcon(icon)
         
         db = database.Database(config.Config())
-        db.insertImg(self.parent().label, 
+        db.insertImg(self.parent().key, 
                      self.parent().thumbsize.height(), 
                      img_binary)
 

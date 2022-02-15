@@ -32,8 +32,6 @@ from jsAssetBrowser.api.qtUtils import Worker
 dirname = os.path.dirname(__file__)
 uiFile = "jsAssetBrowser.ui"
 
-cached_asset = dict()
-
 class AssetBrowser(QtWidgets.QWidget):
     def __init__(self):
         super(AssetBrowser, self).__init__()
@@ -78,7 +76,9 @@ class AssetBrowser(QtWidgets.QWidget):
         
         self.thumbnailSize = QtCore.QSize(thumb_width, thumb_height)
         
-        self.cached_assets = self.db.getCachedThumbnails(self.thumbnailSize)
+        self.cached_assets = self.db.getAllImagesInDB(self.thumbnailSize)
+        self.cached_thumbnails = self.db.getCachedThumbnails(self.thumbnailSize)
+        
         self.img_cached_assets = dict()
         
         self.assets_view = FlowLayout(self.flowWidget)
@@ -150,11 +150,11 @@ class AssetBrowser(QtWidgets.QWidget):
         self.threadpool = QtCore.QThreadPool()
         
         for item in self.plugins[0].getItems(filters):
-            asset = assetItemWidget.AssetItemWidget(self.thumbnailSize, item.name)
+            asset = assetItemWidget.AssetItemWidget(self.thumbnailSize, item.name, item.key, self.cached_assets)
             asset.setObjectName("{}.{}".format(item.sourceKey, item.key))
             
-            if item.key in self.cached_assets:
-                print("icons from data")
+            if item.key in self.cached_thumbnails:
+                #print("icons from data")
                 asset.setIconFromData()
             else:
                 req = QtNetwork.QNetworkRequest(QtCore.QUrl(item.getIconURL(self.thumbnailSize.height())))

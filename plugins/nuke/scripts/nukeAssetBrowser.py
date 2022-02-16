@@ -9,13 +9,14 @@ class NukeAssetBrowser(assetBrowser.AssetBrowser):
         super(NukeAssetBrowser, self).__init__()
     
     def asset_clicked(self):
-        caller = self.sender().parent().objectName()
-        caller = caller.replace("polyheaven.", "")
+        super().asset_clicked()
+        #caller = self.sender().parent().objectName()
+        #caller = caller.replace("polyheaven.", "")
         
-        file = super().requestFile(caller)
+        #file = super().requestFile(caller)
 
-        filePath = file.as_posix()
-        self.assign_hdr(filePath)
+        #filePath = file.as_posix()
+        #self.assign_hdr(filePath)
         
     def assign_hdr(self, filePath):
         selNodes = nuke.selectedNodes()

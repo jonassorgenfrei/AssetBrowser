@@ -27,11 +27,12 @@ class HouAssetBrowser(assetBrowser.AssetBrowser):
         super(HouAssetBrowser, self).__init__()
 
     def asset_clicked(self):
-        caller = self.sender().parent().objectName()
-        caller = caller.replace("polyheaven.", "") 
+        super().asset_clicked()
+        #caller = self.sender().parent().objectName()
+        #caller = caller.replace("polyheaven.", "") 
         
-        file = super().requestFile(caller)
-        self.assign_hdr(file)
+        #file = super().requestFile(caller)
+        #self.assign_hdr(file)
         
     def assign_hdr(self, file):
         # assign HDRI to selected item

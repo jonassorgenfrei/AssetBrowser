@@ -65,11 +65,16 @@ class AssetBrowser(QtWidgets.QWidget):
         self.ui.itemSplitter.setStretchFactor(0, 4)
         self.ui.itemSplitter.setStretchFactor(1, 1)
         
+        self.ui.itemSplitter.setSizes([2000, 0])
+          
         self.ui.contentLabel.setText("HDRIs")
         
         self.ui.modelBtn.clicked.connect(self.changeTypeModel)
         self.ui.hdriBtn.clicked.connect(self.changeTypeHdri)
         self.ui.textureBtn.clicked.connect(self.changeTypeTexture)      
+        
+        # btn to toggle item area
+        self.ui.toggleItemAreaBtn.clicked.connect(lambda: self.toggleAssetInfo(action='toggle'))
         
         thumb_height = 256
         thumb_width = int(thumb_height + thumb_height * 0.33333)-6
@@ -172,6 +177,10 @@ class AssetBrowser(QtWidgets.QWidget):
         caller = caller.replace("polyheaven.", "")
         print(caller)
         
+        # set asset info data 
+        # connect assetItem to assetItemWidget
+        self.toggleAssetInfo(action='show')
+        
     def requestFile(self, caller):
         resolution = self.infoWidget.resolution
         ext = self.infoWidget.extension
@@ -197,6 +206,21 @@ class AssetBrowser(QtWidgets.QWidget):
             
         return local_file_name
 
+    def toggleAssetInfo(self, action='toggle'):
+        splitter = self.ui.itemSplitter
+        
+        (left, right) = splitter.sizes()
+        
+        properties_default_size = 300
+        if action == 'toggle':
+            if right == 0:
+                splitter.setSizes([left - properties_default_size, properties_default_size])
+            else:
+                splitter.setSizes([left + right, 0])
+        elif action == 'show' and right == 0:
+            splitter.setSizes([left - properties_default_size, properties_default_size])
+
+        
     def download_img(self, progress_callback):
         # todo change requests to 
         req = Request(self.url, headers={'User-Agent': 'Mozilla/5.0'})

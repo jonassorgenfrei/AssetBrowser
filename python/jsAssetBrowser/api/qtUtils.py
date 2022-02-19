@@ -1,3 +1,4 @@
+from jsAssetBrowser.api import config, database
 from PySide2 import QtGui, QtCore
 from PySide2.QtCore import Slot
 
@@ -23,6 +24,11 @@ class ImgDownloader(QtCore.QObject):
         icon = QtGui.QIcon()
         icon.addPixmap(self.pixmap)        
         self.parent().setIcon(icon)
+        
+        db = database.Database(config.Config())
+        db.insertImg(self.parent().key, 
+                     self.parent().thumbsize.height(), 
+                     img_binary)
 
 class WorkerSignal(QtCore.QObject):
     finished = QtCore.Signal()

@@ -60,3 +60,11 @@ class Plugin(PluginInterface):
             itmes = []
 
         return items
+
+    def getPreview(self):
+        previews = [
+                    "https://cdn.polyhaven.com/asset_img/thumbs/{ITEM_NAME}.png",
+                    "https://cdn.polyhaven.com/asset_img/primary/{ITEM_NAME}.png",
+                    "https://cdn.polyhaven.com/asset_img/renders/{ITEM_NAME}.png"
+                    ]
+        return previews

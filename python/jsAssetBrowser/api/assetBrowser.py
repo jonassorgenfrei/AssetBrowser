@@ -32,15 +32,13 @@ reload(config)
 dirname = os.path.dirname(__file__)
 uiFile = "jsAssetBrowser.ui"
 
-cached_asset = dict()
-
 
 class AssetBrowser(QtWidgets.QWidget):
     def __init__(self):
         super(AssetBrowser, self).__init__()
         self.config = config.Config()
 
-        db = database.Database(self.config)
+        self.db = database.Database(self.config)
 
         # Loading Plugins
         with open('{}/../plugins/plugins.json'.format(dirname), 'r') as f:
@@ -68,16 +66,29 @@ class AssetBrowser(QtWidgets.QWidget):
         self.ui.itemSplitter.setStretchFactor(0, 4)
         self.ui.itemSplitter.setStretchFactor(1, 1)
 
+        self.ui.itemSplitter.setSizes([2000, 0])
+
         self.ui.contentLabel.setText("HDRIs")
 
         self.ui.modelBtn.clicked.connect(self.changeTypeModel)
         self.ui.hdriBtn.clicked.connect(self.changeTypeHdri)
+
         self.ui.textureBtn.clicked.connect(self.changeTypeTexture)
+
+        # btn to toggle item area
+        self.ui.toggleItemAreaBtn.clicked.connect(
+            lambda: self.toggleAssetInfo(action='toggle'))
 
         thumb_height = 256
         thumb_width = int(thumb_height + thumb_height * 0.33333)-6
 
         self.thumbnailSize = QtCore.QSize(thumb_width, thumb_height)
+
+        self.cached_assets = self.db.getAllImagesInDB(self.thumbnailSize)
+        self.cached_thumbnails = self.db.getCachedThumbnails(
+            self.thumbnailSize)
+
+        self.img_cached_assets = dict()
 
         self.assets_view = FlowLayout(self.flowWidget)
         self.assets_view.setSpacing(0)
@@ -149,16 +160,19 @@ class AssetBrowser(QtWidgets.QWidget):
 
         for item in self.plugins[0].getItems(filters):
             asset = assetItemWidget.AssetItemWidget(
-                self.thumbnailSize, item.name)
+                self.thumbnailSize, item.name, item.key, self.cached_assets)
             asset.setObjectName("{}.{}".format(item.sourceKey, item.key))
 
-            try:
+            if item.key in self.cached_thumbnails:
+                #print("icons from data")
+                asset.setIconFromData()
+            else:
                 req = QtNetwork.QNetworkRequest(QtCore.QUrl(
                     item.getIconURL(self.thumbnailSize.height())))
+
                 down = qtUtils.ImgDownloader(asset, req)
                 down.start_fetch(self.download_queue)
-            except Exception as e:
-                print(e)
+
             self.assets_view.addWidget(asset)
 
             asset.btn.clicked.connect(self.asset_clicked)
@@ -169,6 +183,10 @@ class AssetBrowser(QtWidgets.QWidget):
         caller = self.sender().parent().objectName()
         caller = caller.replace("polyheaven.", "")
         print(caller)
+
+        # set asset info data
+        # connect assetItem to assetItemWidget
+        self.toggleAssetInfo(action='show')
 
     def requestFile(self, caller):
         resolution = self.infoWidget.resolution
@@ -195,6 +213,22 @@ class AssetBrowser(QtWidgets.QWidget):
             self.threadpool.start(worker)
 
         return local_file_name
+
+    def toggleAssetInfo(self, action='toggle'):
+        splitter = self.ui.itemSplitter
+
+        (left, right) = splitter.sizes()
+
+        properties_default_size = 300
+        if action == 'toggle':
+            if right == 0:
+                splitter.setSizes(
+                    [left - properties_default_size, properties_default_size])
+            else:
+                splitter.setSizes([left + right, 0])
+        elif action == 'show' and right == 0:
+            splitter.setSizes(
+                [left - properties_default_size, properties_default_size])
 
     def download_img(self, progress_callback):
         # todo change requests to

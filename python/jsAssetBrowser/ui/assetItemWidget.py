@@ -21,12 +21,18 @@ class AssetItemButton(QtWidgets.QToolButton):
         self.mouseHover.emit(False)
 
 class AssetItemWidget(QtWidgets.QWidget):
-    def __init__(self, thumbsize, label):
+    def __init__(self, thumbsize, label, key, cached_assets):
         super(AssetItemWidget, self).__init__()
         
+        # item data 
+        self.thumbsize = thumbsize
+        self.label = label
+
+        self.cached_assets = cached_assets
+        self.key = key
         self.setMinimumSize(thumbsize)
         
-        self.setToolTip(label)
+        self.setToolTip(self.label)
         
         # main button image
         self.btn = AssetItemButton(self)
@@ -47,7 +53,7 @@ class AssetItemWidget(QtWidgets.QWidget):
         self.cornerBtn.resize(50,50)
         self.cornerBtn.move(thumbsize.width()-60,10)
 
-        self.name_lbl = QtWidgets.QLabel(label, self)
+        self.name_lbl = QtWidgets.QLabel(self.label, self)
         self.name_lbl.move(5, int(thumbsize.height()/1.5)-self.name_lbl.sizeHint().height())
         self.name_lbl.hide()
         self.name_lbl.setStyleSheet("QLabel{font-family: " + QtGui.QFontDatabase.applicationFontFamilies(_id)[0] + ";"\
@@ -60,3 +66,10 @@ class AssetItemWidget(QtWidgets.QWidget):
         
     def setIcon(self, image):
         self.btn.setIcon(image)
+        
+    def setIconFromData(self):
+        imgBlob = self.cached_assets[self.key]
+        qImg = QtGui.QImage.fromData(imgBlob)
+        pixmap = QtGui.QPixmap.fromImage(qImg)
+        self.setIcon(QtGui.QIcon(pixmap))
+        

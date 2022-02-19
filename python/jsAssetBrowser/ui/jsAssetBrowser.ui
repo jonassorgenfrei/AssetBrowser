@@ -279,6 +279,29 @@
            </property>
           </widget>
          </item>
+         <item>
+          <widget class="QPushButton" name="toggleItemAreaBtn">
+           <property name="minimumSize">
+            <size>
+             <width>35</width>
+             <height>35</height>
+            </size>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>35</width>
+             <height>35</height>
+            </size>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+           <property name="icon">
+            <iconset resource="fontAwesome_icons.qrc">
+             <normaloff>:/font-awesome/external/fontAwesome/svgs/solid/cube.svg</normaloff>:/font-awesome/external/fontAwesome/svgs/solid/cube.svg</iconset>
+           </property>
+          </widget>
+         </item>
         </layout>
        </item>
        <item>

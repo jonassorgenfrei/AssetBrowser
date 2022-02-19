@@ -22,3 +22,6 @@ class PluginInterface():
         """Returns a list of categories
         """
         pass
+    
+    def getPreviews(self):
+        pass

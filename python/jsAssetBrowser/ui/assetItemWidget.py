@@ -21,15 +21,19 @@ class AssetItemButton(QtWidgets.QToolButton):
         self.mouseHover.emit(False)
 
 class AssetItemWidget(QtWidgets.QWidget):
-    def __init__(self, thumbsize, label, key, cached_assets):
+    def __init__(self,
+                 thumbsize,
+                 assetItem,
+                 cached_assets):
         super(AssetItemWidget, self).__init__()
         
         # item data 
+        self.assetItem = assetItem
         self.thumbsize = thumbsize
-        self.label = label
+        self.label = self.assetItem.name
 
         self.cached_assets = cached_assets
-        self.key = key
+        self.key = self.assetItem.key
         self.setMinimumSize(thumbsize)
         
         self.setToolTip(self.label)

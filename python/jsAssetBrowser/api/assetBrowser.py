@@ -95,14 +95,14 @@ class AssetBrowser(QtWidgets.QWidget):
         # init
         self.type = "hdris"
         self.category = None
-        '''
-        print(plugins[0].getFilters())
-        '''
      
         self.fillItemArea()
         self.fillCategoriesArea()
 
         self.setLayout(mainLayout)
+        
+        # current selected Item
+        self.currentItem = None
 
     def changeTypeModel(self):
         self.type = "models"
@@ -145,9 +145,9 @@ class AssetBrowser(QtWidgets.QWidget):
         # clear asset view
         qtUtils.clear_layout(self.assets_view)
         
-        filters = {"type": self.type } #"categorie": "skies"
+        filters = {"type": self.type }
         
-        if self.category != None:
+        if self.category != None and self.category != "all":
             filters = {"type": self.type,
                        "category": self.category }
         
@@ -155,7 +155,9 @@ class AssetBrowser(QtWidgets.QWidget):
         self.threadpool = QtCore.QThreadPool()
         
         for item in self.plugins[0].getItems(filters):
-            asset = assetItemWidget.AssetItemWidget(self.thumbnailSize, item.name, item.key, self.cached_assets)
+            asset = assetItemWidget.AssetItemWidget(self.thumbnailSize, 
+                                                    item, 
+                                                    self.cached_assets)
             asset.setObjectName("{}.{}".format(item.sourceKey, item.key))
             
             if item.key in self.cached_thumbnails:
@@ -173,9 +175,10 @@ class AssetBrowser(QtWidgets.QWidget):
     def asset_clicked(self):
         """Interface for the button clicked
         """
-        caller = self.sender().parent().objectName()
-        caller = caller.replace("polyheaven.", "")
-        print(caller)
+        clickedAsset = self.sender().parent().assetItem
+        
+        self.infoWidget.setAssetItem(clickedAsset)
+        self.currentItem = clickedAsset
         
         # set asset info data 
         # connect assetItem to assetItemWidget

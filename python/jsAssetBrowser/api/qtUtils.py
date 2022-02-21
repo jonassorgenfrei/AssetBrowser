@@ -1,5 +1,6 @@
 from jsAssetBrowser.api import config, database
-from PySide2 import QtGui, QtCore
+from jsAssetBrowser.ui import assetItemWidget
+from PySide2 import QtCore, QtGui, QtWidgets
 from PySide2.QtCore import Slot
 
 import sys
@@ -17,7 +18,11 @@ class ImgDownloader(QtCore.QObject):
         
     def resolve_fetch(self):
         the_reply = self.fetch_task.readAll()
-        self.set_widget_image(the_reply)
+        if isinstance(self.parent(), assetItemWidget.AssetItemWidget):
+            self.set_widget_image(the_reply)
+        elif isinstance(self.parent(), QtWidgets.QLabel):
+            self.set_lbl_img(the_reply)
+            
         
     def set_widget_image(self, img_binary):
         self.pixmap.loadFromData(img_binary)
@@ -29,6 +34,15 @@ class ImgDownloader(QtCore.QObject):
         db.insertImg(self.parent().key, 
                      self.parent().thumbsize.height(), 
                      img_binary)
+
+    def set_lbl_img(self, img_binary):
+        self.pixmap.loadFromData(img_binary)    
+        self.parent().setPixmap(self.pixmap)
+        
+        #db = database.Database(config.Config())
+        #db.insertImg(self.parent().key, 
+        #             self.parent().thumbsize.height(), 
+        #             img_binary)
 
 class WorkerSignal(QtCore.QObject):
     finished = QtCore.Signal()

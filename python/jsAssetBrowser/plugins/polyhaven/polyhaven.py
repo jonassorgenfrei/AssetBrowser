@@ -35,8 +35,8 @@ class Plugin(PluginInterface):
             for cat in categories:
                 filters["type"][type]["category"].append(cat)
 
-        return filters
-
+        return filters        
+        
     def getItems(self, filters={}, search=None):
         urlAppend = ""
 

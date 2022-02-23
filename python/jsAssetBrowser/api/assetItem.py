@@ -8,13 +8,16 @@ class AssetItem():
                  name,
                  prevURL,
                  tags=[],
-                 previews=[]):
+                 previews=[],
+                 assetInfoWidgetPluginWidget=None):
         self.plugin = plugin
         self.key = key
         self.name = name
         self.iconUrl = prevURL
         self.tags = tags
         self.previews = previews
+        # optional a function which can append stuff to the asset info widget
+        assetInfoWidgetPluginWidget = assetInfoWidgetPluginWidget
         
     def getIconURL(self, size):
         return self.iconUrl.replace("{SIZE}", "{}".format(size))

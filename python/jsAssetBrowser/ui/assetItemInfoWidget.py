@@ -178,7 +178,20 @@ class AssetItemInfoWidget(QtWidgets.QWidget):
 
         qtUtils.clear_layout(self.tags_view)
         for tag in assetItem.tags:
-            self.tags_view.addWidget(QtWidgets.QPushButton(tag))
+            tag_btn = QtWidgets.QPushButton(tag)
+            # todo check css
+            tag_btn.setStyleSheet("QPushButton{"
+                                  "background-color: rgb(61, 61, 61);"
+                                  "color: rgb(255, 255, 255);"
+                                  "border: 2px solid #333;"
+                                  "border-radius: 20px;}"
+                                  "QPushButton::hover{"
+                                  "background-color: rgb(30, 30, 30);}"
+                                  "QPushButton::pressed{"
+                                  "background-color: rgb(0, 255, 255);"
+                                  "color: rgb(0,0,0);"
+                                  "border: 2px solid #555;}")
+            self.tags_view.addWidget(tag_btn)
 
     def setSimilarAssets(self):
         similarAssets = self.assetItem.getSimilarAssets()

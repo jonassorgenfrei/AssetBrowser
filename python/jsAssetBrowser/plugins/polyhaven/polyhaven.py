@@ -88,14 +88,14 @@ class Plugin(PluginInterface):
                 ]
                 
                 # TODO implement delayed loading of model preview file links
-                #fileData = json.loads(request("{}/files/{}".format(url, key)))
-                #for file in fileData.keys():
+                # fileData = json.loads(request("{}/files/{}".format(url, key)))
+                # for file in fileData.keys():
                 #    if file != "fbx" and file != "gltf" and file != "blend":
                 #        prevFile = "https://cdn.polyhaven.com/asset_img/map_previews/{0}/{0}_{1}_1k.jpg?height=246&height=413".format(key, file)
                 #        previews.append(prevFile)
             
             item = AssetItem(
-                self.srcKey,
+                self,
                 key,
                 data[key]["name"],
                 thumbs.format(KEY=key, SIZE="{SIZE}"),
@@ -106,6 +106,55 @@ class Plugin(PluginInterface):
 
         return items
 
+    def getItem(self, key):
+        # todo add 404 no asset found exception !
+        data = json.loads(request("{}/info/{}".format(url, key)))
+
+        if data["type"] == 0:  # HDRIS
+            previews =  [
+                "https://cdn.polyhaven.com/asset_img/thumbs/{}.png?height=246&height=413".format(key),
+                "https://cdn.polyhaven.com/asset_img/primary/{}.png?height=246&height=413".format(key),
+                "https://cdn.polyhaven.com/asset_img/renders/{}/lone_monk.png?height=246&height=413".format(key)
+            ]
+        elif data["type"] == 1: # textures
+            previews = [
+                "https://cdn.polyhaven.com/asset_img/thumbs/{}.png?height=246&height=413".format(key),
+                "https://cdn.polyhaven.com/asset_img/primary/{}.png?height=246&height=413".format(key),
+                "https://cdn.polyhaven.com/asset_img/renders/{}/clay.png?height=246&height=413".format(key),
+                "https://cdn.polyhaven.com/asset_img/map_previews/{0}/{0}_ao_1k.jpg?height=246&height=413".format(key),
+                "https://cdn.polyhaven.com/asset_img/map_previews/{0}/{0}_arm_1k.jpg?height=246&height=413".format(key),
+                "https://cdn.polyhaven.com/asset_img/map_previews/{0}/{0}_diff_1k.jpg?height=246&height=413".format(key),
+                "https://cdn.polyhaven.com/asset_img/map_previews/{0}/{0}_disp_1k.jpg?height=246&height=413".format(key),
+                "https://cdn.polyhaven.com/asset_img/map_previews/{0}/{0}_nor_gl_1k.jpg?height=246&height=413".format(key),
+                "https://cdn.polyhaven.com/asset_img/map_previews/{0}/{0}_rough_1k.jpg?height=246&height=413".format(key)
+            ]
+        elif data["type"] == 2: # models
+            previews = [
+                "https://cdn.polyhaven.com/asset_img/primary/{}.png?height=246&height=413".format(key),
+                "https://cdn.polyhaven.com/asset_img/renders/{}/clay.png?height=246&height=413".format(key),
+                "https://cdn.polyhaven.com/asset_img/renders/{}/orth_front.png?height=246&height=413".format(key),
+                "https://cdn.polyhaven.com/asset_img/renders/{}/orth_side.png?height=246&height=413".format(key),
+                "https://cdn.polyhaven.com/asset_img/renders/{}/orth_top.png?height=246&height=413".format(key)                  
+            ]
+            
+            # TODO implement delayed loading of model preview file links
+            # fileData = json.loads(request("{}/files/{}".format(url, key)))
+            # for file in fileData.keys():
+            #    if file != "fbx" and file != "gltf" and file != "blend":
+            #        prevFile = "https://cdn.polyhaven.com/asset_img/map_previews/{0}/{0}_{1}_1k.jpg?height=246&height=413".format(key, file)
+            #        previews.append(prevFile)
+        
+        item = AssetItem(
+            self,
+            key,
+            data["name"],
+            thumbs.format(KEY=key, SIZE="{SIZE}"),
+            data["tags"],
+            previews,
+        )
+
+        return item
+    
     def getCategories(self, filters={}):
         if "type" in filters:
             data = json.loads(request("{}/categories/{}".format(url, filters["type"])))

@@ -1,7 +1,7 @@
 """
 QT Implementation of the Asset Browser
 """
-from jsAssetBrowser.api.qtUtils import Worker
+
 import os
 import json
 import pathlib
@@ -75,6 +75,8 @@ class AssetBrowser(QtWidgets.QWidget):
 
         self.ui.textureBtn.clicked.connect(self.changeTypeTexture)
 
+        self.ui.progressBar.hide()
+
         # btn to toggle item area
         self.ui.toggleItemAreaBtn.clicked.connect(
             lambda: self.toggleAssetInfo(action='toggle'))
@@ -93,7 +95,10 @@ class AssetBrowser(QtWidgets.QWidget):
         self.assets_view = FlowLayout(self.flowWidget)
         self.assets_view.setSpacing(0)
 
-        self.infoWidget = assetItemInfoWidget.AssetItemInfoWidget()
+        self.infoWidget = assetItemInfoWidget.AssetItemInfoWidget(self.config, 
+                                                                  self.ui.progressBar,
+                                                                  self.cached_assets,
+                                                                  self.cached_thumbnails)
         self.ui.infoArea.setWidget(self.infoWidget)
 
         # init
@@ -105,8 +110,6 @@ class AssetBrowser(QtWidgets.QWidget):
 
         self.setLayout(mainLayout)
         
-        # current selected Item
-        self.currentItem = None
 
     def changeTypeModel(self):
         self.type = "models"
@@ -162,7 +165,7 @@ class AssetBrowser(QtWidgets.QWidget):
             asset = assetItemWidget.AssetItemWidget(self.thumbnailSize, 
                                                     item, 
                                                     self.cached_assets)
-            asset.setObjectName("{}.{}".format(item.sourceKey, item.key))
+            asset.setObjectName("{}.{}".format(item.plugin.srcKey, item.key))
 
             if item.key in self.cached_thumbnails:
                 #print("icons from data")
@@ -184,37 +187,10 @@ class AssetBrowser(QtWidgets.QWidget):
         clickedAsset = self.sender().parent().assetItem
         
         self.infoWidget.setAssetItem(clickedAsset)
-        self.currentItem = clickedAsset
         
         # set asset info data 
         # connect assetItem to assetItemWidget
         self.toggleAssetInfo(action='show')
-
-    def requestFile(self, caller):
-        resolution = self.infoWidget.resolution
-        ext = self.infoWidget.extension
-
-        hdr_json = json.loads(online_requests.request(
-            "https://api.polyhaven.com/files/{}".format(caller)))
-
-        self.url = hdr_json["hdri"][resolution][ext]["url"]
-        self.file_size = hdr_json["hdri"][resolution][ext]["size"]
-        local_file_name = pathlib.Path(os.path.join(
-            self.config.downloadFolder, os.path.basename(self.url)))
-
-        # check if file exists, it it does, skip download
-        if not local_file_name.is_file():
-            self.local_file = open(local_file_name, 'wb')
-
-            # worker that downloads image
-            worker = Worker(self.download_img)
-            worker.signals.result.connect(self.print_output)
-            worker.signals.finished.connect(self.thread_complete)
-            worker.signals.progress.connect(self.progress_fn)
-
-            self.threadpool.start(worker)
-
-        return local_file_name
 
     def toggleAssetInfo(self, action='toggle'):
         splitter = self.ui.itemSplitter
@@ -231,36 +207,3 @@ class AssetBrowser(QtWidgets.QWidget):
         elif action == 'show' and right == 0:
             splitter.setSizes(
                 [left - properties_default_size, properties_default_size])
-
-    def download_img(self, progress_callback):
-        # todo change requests to
-        req = Request(self.url, headers={'User-Agent': 'Mozilla/5.0'})
-
-        res = urlopen(req)
-        offset = 0
-        buffer = 512
-
-        while True:
-            chunk = res.read(buffer)
-            if not chunk:
-                break
-
-            self.local_file.write(chunk)
-            offset = offset + len(chunk)
-
-            progress = offset/int(self.file_size) * 100
-
-            progress_callback.emit(progress)
-
-        progress_callback.emit(100)
-        self.local_file.close()
-        return "Done."
-
-    def progress_fn(self, n):
-        self.ui.progressBar.setValue(n)
-
-    def print_output(self, s):
-        print("Result:", s)
-
-    def thread_complete(self):
-        print("Thread Done!")

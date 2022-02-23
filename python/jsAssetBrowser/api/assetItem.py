@@ -1,12 +1,15 @@
+import json
+from jsAssetBrowser.api import online_requests
+
 class AssetItem():
     def __init__(self,
-                 sourceKey,
+                 plugin,
                  key,
                  name,
                  prevURL,
                  tags=[],
                  previews=[]):
-        self.sourceKey = sourceKey
+        self.plugin = plugin
         self.key = key
         self.name = name
         self.iconUrl = prevURL
@@ -15,4 +18,24 @@ class AssetItem():
         
     def getIconURL(self, size):
         return self.iconUrl.replace("{SIZE}", "{}".format(size))
-       
+    
+    def getDownloadLinks(self, resolution, ext):
+        # todo change to manged by plugins individually
+        hdr_json = json.loads(online_requests.request(
+            "https://api.polyhaven.com/files/{}".format(self.key)))
+
+        url = hdr_json["hdri"][resolution][ext]["url"]
+        file_size = hdr_json["hdri"][resolution][ext]["size"]
+
+        return url, file_size
+    
+    def getSimilarAssets(self):
+        # todo change to manged by plugins individually
+        similiar_json = json.loads(online_requests.request(
+            "https://api.polyhaven.com/similar/{}".format(self.key)))
+        
+        assets = []
+        for key in similiar_json:
+            assets.append(self.plugin.getItem(key))
+        
+        return assets

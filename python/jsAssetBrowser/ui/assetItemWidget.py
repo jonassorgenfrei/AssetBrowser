@@ -1,8 +1,8 @@
 import os
-from PySide2 import QtWidgets, QtCore, QtGui
-from PySide2.QtCore import Qt
 
 from jsAssetBrowser.ui import fontAwesome_icons_rc
+from PySide2 import QtCore, QtGui, QtWidgets
+from PySide2.QtCore import Qt
 
 font_path = os.path.join(os.path.dirname(__file__), "external", "fonts", "OpenSansCondensed-Bold.ttf")
 _id = QtGui.QFontDatabase.addApplicationFont(font_path)

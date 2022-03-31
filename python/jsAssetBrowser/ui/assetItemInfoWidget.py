@@ -7,7 +7,7 @@ from PySide2 import QtWidgets, QtCore, QtGui, QtNetwork
 from PySide2.QtCore import Qt
 
 from jsAssetBrowser.api import qtUtils
-from jsAssetBrowser.api.qtUtils import Worker
+from jsAssetBrowser.api.qtUtils import AssetBrowserWorker
 from jsAssetBrowser.ui.flowLayout import FlowLayout
 from jsAssetBrowser.ui import fontAwesome_icons_rc, assetItemWidget
 
@@ -102,7 +102,7 @@ class AssetItemInfoWidget(QtWidgets.QWidget):
             self.local_file = open(local_file_name, 'wb')
 
             # worker that downloads image
-            worker = Worker(self.download_img, url, file_size)
+            worker = AssetBrowserWorker(self.download_img, url, file_size)
             worker.signals.result.connect(self.print_output)
             worker.signals.finished.connect(self.thread_complete)
             worker.signals.progress.connect(self.progress_fn)

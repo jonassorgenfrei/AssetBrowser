@@ -1,9 +1,13 @@
 import os
 import nuke
 from nukescripts import panels
+from PySide2.QtWidgets import QWidget
 
-from jsAssetBrowser.api import assetBrowser
-
+try:
+    from jsAssetBrowser.api import assetBrowser
+except Exception as e:
+    print(e)
+    
 class NukeAssetBrowser(assetBrowser.AssetBrowser):
     def __init__(self):
         super(NukeAssetBrowser, self).__init__()
@@ -19,12 +23,13 @@ class NukeAssetBrowser(assetBrowser.AssetBrowser):
         #self.assign_hdr(filePath)
         
     def assign_hdr(self, filePath):
-        selNodes = nuke.selectedNodes()
+        pass
+        #selNodes = nuke.selectedNodes()
         
-        if len(selNodes) > 0:
-            selNode = selNodes[0]
+        #if len(selNodes) > 0:
+        #    selNode = selNodes[0]
             
-            nodeClass = selNode.Class()
+        #    nodeClass = selNode.Class()
             
-            if nodeClass == "Read":
-                selNode.knob('file').setValue(filePath)
+        #    if nodeClass == "Read":
+        #        selNode.knob('file').setValue(filePath)

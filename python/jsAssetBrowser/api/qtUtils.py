@@ -44,21 +44,21 @@ class ImgDownloader(QtCore.QObject):
         #             self.parent().thumbsize.height(), 
         #             img_binary)
 
-class WorkerSignal(QtCore.QObject):
+class AssetBrowserWorkerSignal(QtCore.QObject):
     finished = QtCore.Signal()
     error = QtCore.Signal(tuple)
     result = QtCore.Signal(object)
     progress = QtCore.Signal(int)
     
-class Worker(QtCore.QRunnable):
+class AssetBrowserWorker(QtCore.QRunnable):
     # Worker thread
     def __init__(self, fn, *args, **kwargs):
-        super(Worker, self).__init__()
+        super(AssetBrowserWorker, self).__init__()
         
         self.fn = fn
         self.args = args
         self.kwargs = kwargs
-        self.signals = WorkerSignal()
+        self.signals = AssetBrowserWorkerSignal()
         
         # signal to kwargs
         self.kwargs['progress_callback'] = self.signals.progress

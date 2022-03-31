@@ -4,8 +4,6 @@ from jsAssetBrowser.ui import fontAwesome_icons_rc
 from PySide2 import QtCore, QtGui, QtWidgets
 from PySide2.QtCore import Qt
 
-font_path = os.path.join(os.path.dirname(__file__), "external", "fonts", "OpenSansCondensed-Bold.ttf")
-_id = QtGui.QFontDatabase.addApplicationFont(font_path)
 
 class AssetItemButton(QtWidgets.QToolButton):
     mouseHover = QtCore.Signal(bool)
@@ -26,7 +24,9 @@ class AssetItemWidget(QtWidgets.QWidget):
                  assetItem,
                  cached_assets):
         super(AssetItemWidget, self).__init__()
-        
+        font_path = os.path.join(os.path.dirname(__file__), "external", "fonts", "OpenSansCondensed-Bold.ttf")
+        _id = QtGui.QFontDatabase.addApplicationFont(font_path)
+
         # item data 
         self.assetItem = assetItem
         self.thumbsize = thumbsize

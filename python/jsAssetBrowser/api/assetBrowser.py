@@ -134,7 +134,37 @@ class AssetBrowser(QtWidgets.QWidget):
         if self.category != caller:
             self.category = caller
             self.fillItemArea()
-
+    '''
+    def find_tag_in_assets(self):
+        # connect tag button
+        # tag_btn.clicked.connect(self.find_tag_in_assets)
+        tag_name = self.sender().text()
+        for asset in self.all_data():
+            tags = self.all_data[asset]['tags']
+            if tag_name in tags:
+                self.tags_section[asset] = self.all_data[asset]
+                
+        self. load_assets_with_tag()
+        
+    def load_assets_with_tag(self):
+        self.clear_layout(self.assets_view)
+        for key in self.tags_selection.keys():
+            asset = AssetItem(self.thumbsize, key)
+            asset.setObjectName(key)
+            url = "https://cdn.polyhaven.com/asset_img/thumbs/" + key + ".png?height="+str(self.thumbnailsize)
+            req = QtNetwork.QNetworkRequest(QtCore.QUrl(ulr))
+            self.assets_view.addWidget(asset)
+            
+            if key in self.cached_assets:
+                asset.set_icon_from_data()
+            else:
+                down = ImgDownloader(asset, req)
+                down.start_fetch(self.download_queue)
+                
+            #connect function to button
+            asset.btn.clicked.connect(self.asset_clicked)
+    '''
+    
     def fillCategoriesArea(self):
         filters = {"type": self.type}
         categories = self.plugins[0].getCategories(filters)

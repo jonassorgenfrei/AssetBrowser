@@ -6,7 +6,7 @@ from urllib.request import Request, urlopen
 from PySide2 import QtWidgets, QtCore, QtGui, QtNetwork
 from PySide2.QtCore import Qt
 
-from jsAssetBrowser.api import qtUtils
+from jsAssetBrowser.ui import qtUtils
 from jsAssetBrowser.api.qtUtils import AssetBrowserWorker
 from jsAssetBrowser.ui.flowLayout import FlowLayout
 from jsAssetBrowser.ui import fontAwesome_icons_rc, assetItemWidget

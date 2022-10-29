@@ -3,14 +3,20 @@ from warnings import filters
 from jsAssetBrowser.api.online_requests import request
 from jsAssetBrowser.api.plugin import PluginInterface
 from jsAssetBrowser.api.assetItem import AssetItem
+from jsAssetBrowser.api.assetBrowserTypes import AssetBrowserTypes
 
 # poly haven HDRI api
 url = "https://api.polyhaven.com"
 thumbs = "https://cdn.polyhaven.com/asset_img/thumbs/{KEY}.png?height={SIZE}"
 
 
+
 class Plugin(PluginInterface):
     srcKey = "polyheaven"
+
+    types = {AssetBrowserTypes.HDRIS : "hdris",
+             AssetBrowserTypes.MODELS: "models",
+             AssetBrowserTypes.TEXTURES: "textures"}
 
     def __init__(self):
         super().__init__()
@@ -40,8 +46,8 @@ class Plugin(PluginInterface):
     def getItems(self, filters={}, search=None):
         urlAppend = ""
 
-        if "type" in filters:
-            urlAppend = "?t={}".format(filters["type"])
+        if "type" in filters and filters["type"] in self.types:
+            urlAppend = "?t={}".format(self.types[filters["type"]])
         if "category" in filters:
             urlAppend = (
                 "{}&c={}".format(urlAppend, filters["category"])
@@ -156,10 +162,10 @@ class Plugin(PluginInterface):
         return item
     
     def getCategories(self, filters={}):
-        if "type" in filters:
-            data = json.loads(request("{}/categories/{}".format(url, filters["type"])))
+        if "type" in filters and filters["type"] in self.types:
+            data = json.loads(request("{}/categories/{}".format(url, self.types[filters["type"]])))
             items = data.keys()
         else:
-            itmes = []
+            items = []
 
         return items

@@ -2,6 +2,12 @@
 QT Implementation of the Asset Browser
 """
 
+#################################
+#################################
+# DEPRECATED JUST FOR REFERENCE #
+#################################
+#################################
+
 import os
 import json
 import pathlib

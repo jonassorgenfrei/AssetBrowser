@@ -5,12 +5,14 @@ from PySide2.QtWidgets import QWidget
 
 try:
     from jsAssetBrowser.api import assetBrowser
+    from jsAssetBrowser.ui import assetBrowserWidget
 except Exception as e:
     print(e)
     
-class NukeAssetBrowser(assetBrowser.AssetBrowser):
+class NukeAssetBrowser(assetBrowserWidget.AssetBrowserWidget):
     def __init__(self):
-        super(NukeAssetBrowser, self).__init__()
+        self.assetBrowser = assetBrowser.AssetBrowser()
+        super(NukeAssetBrowser, self).__init__(self.assetBrowser)
     
     def asset_clicked(self):
         super().asset_clicked()

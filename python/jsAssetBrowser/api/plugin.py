@@ -1,7 +1,11 @@
 # An Interface for Plugins
 
 class PluginInterface():
+    
     srcKey = "PLUGIN_INTERFACE"
+    # conversion from assetBrowserTypes to plugin type names
+    types = {}
+
     def __init__(self):
         print("Loaded Plugin: ", end='')
     

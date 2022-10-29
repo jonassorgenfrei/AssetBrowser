@@ -23,6 +23,13 @@ class AssetItemWidget(QtWidgets.QWidget):
                  thumbsize,
                  assetItem,
                  cached_assets):
+        """AssetItemWidget UI Controller for AssetItems
+
+        Args:
+            thumbsize (_type_): _description_
+            assetItem (_type_): _description_
+            cached_assets (_type_): _description_
+        """
         super(AssetItemWidget, self).__init__()
         font_path = os.path.join(os.path.dirname(__file__), "external", "fonts", "OpenSansCondensed-Bold.ttf")
         _id = QtGui.QFontDatabase.addApplicationFont(font_path)

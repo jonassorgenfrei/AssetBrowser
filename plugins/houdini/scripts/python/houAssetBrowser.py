@@ -2,6 +2,7 @@ import hou
 
 try:
     from jsAssetBrowser.api import assetBrowser
+    from jsAssetBrowser.ui import assetBrowserWidget
 except ModuleNotFoundError:
     # Note:
     # houdini 19.0.455 has a problem that PYTHONPATH append in the package json dosnt work
@@ -9,11 +10,13 @@ except ModuleNotFoundError:
     import sys
     sys.path.append("{}/python".format(hou.getenv("jsAssetBrowser")))
     from jsAssetBrowser.api import assetBrowser
+    from jsAssetBrowser.ui import assetBrowserWidget
     
 # DEBUG
 from importlib import reload
 
 reload(assetBrowser)
+reload(assetBrowserWidget)
 #reload(qtUtils)
 # DEBUG
 
@@ -21,20 +24,22 @@ reload(assetBrowser)
 Module for the Houdini Asset Browser UI
 """
 
-
-class HouAssetBrowser(assetBrowser.AssetBrowser):
+class HouAssetBrowser(assetBrowserWidget.AssetBrowserWidget):
     def __init__(self):
-        super(HouAssetBrowser, self).__init__()
-
+        self.assetBrowser = assetBrowser.AssetBrowser()
+        super(HouAssetBrowser, self).__init__(self.assetBrowser)
+        
     def asset_clicked(self):
-        super().asset_clicked()
+        #super().asset_clicked()
         #caller = self.sender().parent().objectName()
         #caller = caller.replace("polyheaven.", "") 
         
         #file = super().requestFile(caller)
         #self.assign_hdr(file)
+        pass
         
     def assign_hdr(self, file):
+        '''
         # assign HDRI to selected item
         selItems = hou.selectedNodes()
         
@@ -54,7 +59,9 @@ class HouAssetBrowser(assetBrowser.AssetBrowser):
                 selItem.parm("ar_light_color_type").set(6)
                 selItem.parm("ar_format").set(2)
                 selItem.parm("ar_light_color_texture").set(str(file))
+        '''
     
     def thread_complete(self):
-        super().thread_complete()
-        print("reload texture! in Houdini")
+        #super().thread_complete()
+        #print("reload texture! in Houdini")
+        pass

@@ -1,4 +1,4 @@
-from PySide2 import QtWidgets, QtGui, QtCore, QtUiTools
+from PySide2 import QtWidgets, QtGui, QtNetwork, QtCore, QtUiTools
 import os
 
 from jsAssetBrowser.ui.flowLayout import FlowLayout
@@ -65,9 +65,6 @@ class AssetBrowserWidget(QtWidgets.QWidget):
         thumb_width = int(thumb_height + thumb_height * 0.33333)-6
 
         self.thumbnailSize = QtCore.QSize(thumb_width, thumb_height)
-
-        #self.cached_thumbnails = self.db.getCachedThumbnails(
-        #    self.thumbnailSize)
 
         self.img_cached_assets = dict()
 
